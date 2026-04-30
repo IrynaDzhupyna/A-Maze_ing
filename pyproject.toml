@@ -1,0 +1,21 @@
+[project]
+name = "a-maze-ing"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []
+
+[dependency-groups]
+dev = []
+
+[tool.flake8]
+exclude = [
+    "__pycache__"
+]
+
+[tool.mypy]
+exclude = "__pycache__"
+
+[tool.pytest.ini_options]
+pythonpath = ["."]

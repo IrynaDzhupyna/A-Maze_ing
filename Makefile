@@ -1,39 +1,36 @@
-NAME = a_maze_ing.py
-PYTHON = python3
-PIP = pipx
+SRC = src
+
+NAME = $(SRC)/a_maze_ing.py
+CONFIG = $(SRC)/config.txt
+
 VENV = .venv
 
-
 run: install
-	$(PYTHON) $(NAME)
+	uv run $(NAME) $(CONFIG)
 
-install:
-	$(PIP) install -r requirements.txt
+install: $(VENV)
 
-debug: 
-	$(PYTHON) -m pdb $(NAME)
+# create a virtual enviroment in inside existing folder
+$(VENV): pyproject.toml uv.lock	
+	pipx install uv
+	uv venv --python 3.10
+	uv sync --all-groups
+
+debug:
+	uv run python -m pdb $(NAME) $(CONFIG)
 
 clean:
-	find . -type d -name "__pycache__" -exec rm -rf {} +
-	find . -type f -name "*.pyc" -delete
-	rm -rf .mypy_cache
-	rm -rf build dist *.egg-info
+	rm -rf $(VENV) */__pycache__ .mypy_cache .pytest_cache
 
 lint:
-	flake8 .
-	mypy . --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs
+	uvx flake8 $(SRC)
+	uv run mypy $(SRC)
 
 lint-strict:
-	flake8 .
-	mypy . --strict
-
-reformat:
-
+	uvx flake8 $(SRC)
+	uv run mypy --strict $(SRC)
 
 test:
+	uvx --with pythest pytest 
 
-update:
-
-
-
-.PHONY: run install debug clean lint lint-strict reformat test update
+.PHONY: run install debug clean lint lint-strict test

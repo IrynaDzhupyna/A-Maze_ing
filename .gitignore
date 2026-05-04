@@ -1,0 +1,12 @@
+# Virtual enviroment
+.venv/
+
+# Python cache
+*/__pycache__
+
+# Type checker cache
+.mypy_cache/
+
+# Pytest cache
+.pytest_cache
+test/

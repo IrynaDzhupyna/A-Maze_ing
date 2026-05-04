@@ -1,6 +1,7 @@
 import random
 import sys
 from typing import List, Dict, Tuple
+from get_output_file import write_output_file
 
 
 class Cell:
@@ -10,18 +11,53 @@ class Cell:
         self.visited = False
         self.walls = {
             "N": True,
-            "S": True,
             "E": True,
+            "S": True,
             "W": True
         }
-    
+
+    # From subject:    
+    #     Bit 0(LSB) = North
+    #     Bit 1 = East
+    #     Bit 2 = South
+    #     Bit 3 = West
+    #
+    # So ?:
+
+    def cell_to_hex(self):
+        cell_hex = 0
+        if self.walls["N"] == True:
+            cell_hex += 2**0
+        if self.walls["E"] == True:
+            cell_hex += 2**1
+        if self.walls["S"] == True:
+            cell_hex += 2**2
+        if self.walls["W"] == True:
+            cell_hex += 2**3
+        cell_hex = format(cell_hex, "X")
+        return cell_hex
+    # old version
+    # def cell_to_hex(self):
+    #     cell_hex = 0
+    #     if self.walls["N"] == True:
+    #         cell_hex += 2**3
+    #     if self.walls["E"] == True:
+    #         cell_hex += 2**2
+    #     if self.walls["S"] == True:
+    #         cell_hex += 2**1
+    #     if self.walls["W"] == True:
+    #         cell_hex += 2**0
+    #     cell_hex = format(cell_hex, "X")
+    #     # print(cell_hex)
+    #     return cell_hex
+
 
 class Maze:
     def __init__(self, width, height, data_dict):
-        if width <= 9 or width >= 429:
+        if width < 9 or width >= 429:
             raise ValueError("Width must be at least 9 and at most 429")
         
-        elif height <= 7 or height >= 429:
+        elif height < 7 or height >= 429:
             raise ValueError("Height must be at least 7 and at most 429")
         
         elif height*width >= 32000:
@@ -64,9 +100,9 @@ class Maze:
 
         directions = [  # pick one of the 4 directions
             (0, -1, "N"),
+            (1, 0, "E"),
             (0, 1, "S"),
-            (-1, 0, "W"),
-            (1, 0, "E")
+            (-1, 0, "W")
         ]
 
         for dx, dy, direction in directions:
@@ -86,9 +122,9 @@ class Maze:
 
         directions = [
             (0, -1, "N"),
+            (1, 0, "E"),
             (0, 1, "S"),
-            (-1, 0, "W"),
-            (1, 0, "E")
+            (-1, 0, "W")
         ]
 
         for dx, dy, direction in directions:
@@ -125,8 +161,8 @@ class Maze:
             else:
                 break
 
-        self.entry.walls["N"] = False
-        self.exit.walls["S"] = False
+        # self.entry.walls["N"] = False
+        # self.exit.walls["S"] = False
 
         if self.perfect_maze == "False":
             print("Imperfect maze")
@@ -204,6 +240,7 @@ class Maze:
 def display(maze):  # display 2 lines for every row of the grid : top one ( horizontal walls)
     # and middle one (vertical wall and cell)
 
+    print("\n=== Maze Terminal Visualization ===\n")
     for row in maze.grid:
         top = ""
         middle = ""
@@ -235,6 +272,20 @@ def display(maze):  # display 2 lines for every row of the grid : top one ( hori
         print(middle + "|")  # print the end of the middle line
 
     print("+---" * maze.width + "+")  # print the very last row of the grid (the sourthmost walls)
+
+
+def display_hex(maze): # displays the hexadecimal maze
+    print("\n=== Hexadecimal Maze ===\n")
+    line = ""
+    x = 0
+    y = 0
+    # print(maze.grid[0][0].cell_to_hex()) # print the hexadecimal of the first cell
+    # print(maze.grid[maze.height - 1][maze.width - 1].cell_to_hex()) # print the hexadecimal of the last cell
+    for y in range(maze.height):
+        for x in range(maze.width):
+            line += maze.grid[y][x].cell_to_hex()
+        print(line)
+        line = ""
 
 
 def read_file(file_name):
@@ -280,11 +331,14 @@ def main():
     if not content:
         return print_error("Problem with reading the file")
     data_dict = fill_the_dict(content)
-    print("=== Maze configuration ===")
+    print("=== Maze configuration ===\n")
     print(content)
     maze = Maze(int(data_dict["WIDTH"]), int(data_dict["HEIGHT"]), data_dict)  # create a width x height grid with the class Maze
+    random.seed(int(data_dict["SEED"])) # sets the random num gen starting point from seed(config.txt), maze is reproducible
     maze.generate()  # generate a unique path throught all the cells with DFS
     display(maze)  # display the grid on the terminal
+    display_hex(maze)
+    write_output_file(data_dict["OUTPUT_FILE"], maze) #writes the hex maze && entry/exit coordinates to file
 
 
 if __name__ == "__main__":

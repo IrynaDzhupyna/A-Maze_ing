@@ -31,6 +31,6 @@ lint-strict:
 	uv run mypy --strict $(SRC)
 
 test:
-	uvx --with pythest pytest 
+	uvx --with pytest pytest 
 
 .PHONY: run install debug clean lint lint-strict test

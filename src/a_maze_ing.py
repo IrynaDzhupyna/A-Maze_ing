@@ -172,9 +172,12 @@ class Maze:
         if self.perfect_maze == "False":
             print("Imperfect maze")
 
-            nb_walls_to_break = 10 #for example
+            nb_walls_to_break = int((self.width * self.height) * 0.1)
+            print("number of walls to remove :", nb_walls_to_break)
+
+            removed_wall = 0
             
-            for _ in range(nb_walls_to_break):
+            while removed_wall < nb_walls_to_break:
                 cell = self.get_cell(
                     random.randint(0, self.width - 1),
                     random.randint(0, self.height - 1)
@@ -188,7 +191,10 @@ class Maze:
                 neighbors = self.get_all_neighbors(cell)
 
                 valid_neighbors = [
-                    (n, d) for (n, d) in neighbors if cell.walls[d]
+                    (n, d) for (n, d) in neighbors 
+                    if cell.walls[d]
+                    and (cell.x, cell.y) not in self.pattern_42
+                    and (n.x, n.y) not in self.pattern_42
                 ]
 
                 if not valid_neighbors:
@@ -196,14 +202,20 @@ class Maze:
 
                 neighbor, direction = random.choice(valid_neighbors)
 
-                if cell in self.pattern_42 or neighbor in self.pattern_42:
-                    continue
-
                 if cell == self.entry or cell == self.exit:
                     continue
 
-                self.remove_wall(cell, neighbor, direction)
-                print("wall removed")
+                if not (self.is_corridor(cell) or self.is_corridor(neighbor)):
+                    continue
+
+                else:
+                    self.remove_wall(cell, neighbor, direction)
+                    removed_wall += 1
+                    print("wall removed")
+
+    def is_corridor(self, cell):
+        open_walls = sum(not w for w in cell.walls.values())
+        return open_walls <= 2
 
     def remove_wall(self, current, next_cell, direction):  # remove a wall from a cell
         # and the wall from the other (opposite) cell
@@ -289,8 +301,8 @@ def display_hex(maze): # displays the hexadecimal maze
     for y in range(maze.height):
         for x in range(maze.width):
             line += maze.grid[y][x].cell_to_hex()
-        print(line)
-        line = ""
+        line += "\n"
+    print(line)
 
 
 def read_file(file_name):
@@ -328,6 +340,9 @@ def print_error(message):
 
 
 def solve(maze):
+    if maze.entry == maze.exit:
+        return [maze.entry]
+    
     start = maze.entry
     end = maze.exit
     queue = deque([start])
@@ -433,7 +448,7 @@ def main():
     data_dict = fill_the_dict(content)
     print("=== Maze configuration ===\n")
     print(content)
-    random.seed(int(data_dict["SEED"])) # sets the random num gen starting point from seed(config.txt), maze is reproducible
+   # random.seed(int(data_dict["SEED"])) # sets the random num gen starting point from seed(config.txt), maze is reproducible
     maze = Maze(int(data_dict["WIDTH"]), int(data_dict["HEIGHT"]), data_dict)  # create a width x height grid with the class Maze
     maze.generate()  # generate a unique path throught all the cells with DFS
     path = solve(maze)

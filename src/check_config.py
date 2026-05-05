@@ -20,14 +20,14 @@ def read_file(file_name):
 
 
 def fill_the_dict(content):
-    # what if no "\n" found
     lines = content.split("\n")
     dictunary = {}
     try:
         for line in lines:
-            key, value = line.split("=", 2)
-            dictunary[key] = value
-            print(key, value)
+            if line.strip() and not line.strip().startswith("#"):
+                key, value = line.split("=", 2)
+                dictunary[key] = value
+                print(key, value)
     except ValueError:
         return print_error("not enough values to unpack")
     else:

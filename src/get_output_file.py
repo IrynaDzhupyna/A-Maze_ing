@@ -1,4 +1,4 @@
-def write_output_file(file_name, maze):
+def write_output_file(file_name, maze, path):
     with open(file_name, 'w') as file:
         for y in range(maze.height):
             line = ""
@@ -7,6 +7,6 @@ def write_output_file(file_name, maze):
             file.write(line + "\n")
 
         file.write("\n")
-        file.write(f"{maze.entry.x}, {maze.entry.y}\n")
+        file.write(f"{maze.entry.x},{maze.entry.y}\n")
         file.write(f"{maze.exit.x},{maze.exit.y}\n")
-        # path needed
+        file.write(f"{path}\n")

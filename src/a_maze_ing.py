@@ -2,6 +2,8 @@ import random
 import sys
 from typing import List, Dict, Tuple
 from get_output_file import write_output_file
+#for BFS queue
+from collections import deque
 
 
 class Cell:
@@ -90,10 +92,12 @@ class Maze:
         self.entry = self.get_cell(entry_x, entry_y)
         self.exit = self.get_cell(exit_x, exit_y)
 
+
     def get_cell(self, x ,y):
         if not (0 <= x < self.width and 0 <= y < self.height):
             raise ValueError(f"Invalid coordinates : ({x}, {y})")
         return self.grid[y][x]
+
 
     def get_neighbors(self, cell):  # get the neighbor cell of the current cell
         neighbors = []
@@ -117,6 +121,7 @@ class Maze:
 
         return neighbors
     
+    # Do we have two same functions or they are for different purpose
     def get_all_neighbors(self, cell):
         neighbors = []
 
@@ -322,6 +327,101 @@ def print_error(message):
     print(f"{message}", file=sys.stderr)
 
 
+def solve(maze):
+    start = maze.entry
+    end = maze.exit
+    queue = deque([start])
+    came_from = {start: None}
+
+    directions = [
+            (0, -1, "N"),
+            (1, 0, "E"),
+            (0, 1, "S"),
+            (-1, 0, "W")
+        ]
+    
+    while queue:
+        current = queue.popleft()
+        if current == end:
+            break
+        for dx, dy, direction in directions:
+            nx = current.x + dx
+            ny = current.y + dy
+            if 0 <= nx < maze.width and 0 <= ny < maze.height:
+                neighbor = maze.grid[ny][nx]
+                if not current.walls[direction] and neighbor not in came_from:
+                    came_from[neighbor] = (current, direction)
+                    queue.append(neighbor)
+    
+    # do we need this?
+    if end not in came_from:
+        return []
+    path = []
+    current = end
+    while current != start:
+        current, direction = came_from[current]
+        path.append(direction)
+
+    path.reverse()
+    return "".join(path)
+        
+
+"""def solve_maze(maze):
+    if maze.entry == maze.exit:
+        return [maze.entry]
+    
+    #stores cells we need to explore
+    queue = deque([maze.entry])
+    # set
+    visited = {maze.entry}
+    # dict
+    previous = {}
+
+    while queue:
+        current = queue.popleft()
+        if current == maze.exit:
+            break
+
+        for neigbor in maze.get_neighbors(current):
+            if neigbor not in visited:
+                visited.add(neigbor)
+                previous[neigbor] = current
+                queue.append(neigbor)
+    
+    if maze.exit not in previous:
+        return []
+    
+    current = maze.exit
+    path = [maze.exit]
+
+    while current != maze.entry:
+        current = previous[current]
+        path.append(current)
+    
+    path.reverse()
+    return path
+
+
+def convert_path_to_string(path):
+    if not path:
+        return ""
+    
+    directions = []
+
+    for i in range(len(path) - 1):
+        x1, y1 = path[i]
+        x2, y2 = path[i + 1]
+
+        if x2 == x1 and y2 == y1 - 1:
+            directions.append("N")
+        elif x2 == x1 + 1 and y2 == y1:
+            directions.append("E")
+        elif x2 == x1 and y2 == y1 + 1:
+            directions.append("S")
+        elif x2 == x1 - 1 and y2 == y1:
+            directions.append("W")
+    return "".join(directions)"""
+
 def main():
     if len(sys.argv) != 2:
         return print_error("Not enough arguments")
@@ -333,12 +433,14 @@ def main():
     data_dict = fill_the_dict(content)
     print("=== Maze configuration ===\n")
     print(content)
-    maze = Maze(int(data_dict["WIDTH"]), int(data_dict["HEIGHT"]), data_dict)  # create a width x height grid with the class Maze
     random.seed(int(data_dict["SEED"])) # sets the random num gen starting point from seed(config.txt), maze is reproducible
+    maze = Maze(int(data_dict["WIDTH"]), int(data_dict["HEIGHT"]), data_dict)  # create a width x height grid with the class Maze
     maze.generate()  # generate a unique path throught all the cells with DFS
+    path = solve(maze)
+    #writes the hex maze && entry/exit coordinates and shortest way to file
+    write_output_file(data_dict["OUTPUT_FILE"], maze, path)
     display(maze)  # display the grid on the terminal
     display_hex(maze)
-    write_output_file(data_dict["OUTPUT_FILE"], maze) #writes the hex maze && entry/exit coordinates to file
 
 
 if __name__ == "__main__":

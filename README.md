@@ -131,6 +131,49 @@ The Makefile should give the following instructions :
     `make clean`        #removes caches and generated artefacts
 
 
+# BFS (Breadth-First-Search)
+
+Finds the fastest way to solve the maze.
+It explores layers by layers (distance = 1, then 2, then 3...)
+The first time you reach the exit, it's automatically the shortest path
+Node - cell(x,y)
+Neighbor is a cell adjacent (N, E, S, W) with no wall in between.
+
+## Check current walls before move
+
+### North:
+- Boundary: y > 0
+- Wall: North wall of current cell is open
+- Move: (x, y - 1)
+
+### East:
+- Boundary: x + 1 < width
+- Wall: East wall of current cell is open
+- Move: (x + 1, y)
+
+### South:
+- Boundary: y + 1 < height
+- Wall: South wall of current cell is open
+- Move: (x, y + 1)
+
+### West:
+- Boundary: x > 0
+- Wall: West wall of current cell is open
+- Move: (x - 1, y)
+
+Stop when exit_coordinates are reached. 
+
+## Design:
+
+Each cell remembers "I came from previous cell"
+
+Store: 
+- only (x, y)
+- and keep a parent dictionary 
+
+### Parent Dictionary
+
+parent[(child_x, child_y)] = (parent_x, parent_y)
 
 # RESSOURCES
 

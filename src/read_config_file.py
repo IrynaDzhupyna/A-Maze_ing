@@ -1,5 +1,5 @@
 import sys
-from maze_definition import Maze
+
 
 def read_file(file_name):
     try:
@@ -16,6 +16,7 @@ def read_file(file_name):
 
 
 def fill_the_dict(content):
+    """Parses the file into dictionary"""
     lines = content.split("\n")
 
     data_dict = {}
@@ -30,6 +31,32 @@ def fill_the_dict(content):
         return None
     else:
         return data_dict
+
+
+def validate_config(data_dict: dict) -> bool:
+    """Checks if keys from data_dict we send is valid, have all keys and values needed
+        
+        Returns:
+            True if all is fine
+            Calls print_error() and return False if not"""
+    required_keys = ["WIDTH", "HEIGHT", "ENTRY", "EXIT", "OUTPUT_FILE", "PERFECT"]
+    for key in required_keys:
+        if key not in data_dict:
+            print_error(f"Missing required key: {key}")
+            return False
+        
+    if data_dict["PERFECT"] not in ("True", "False"):
+        return False
+    
+    for key in ("ENTRY", "EXIT"):
+        try:
+            x, y = data_dict[key].split(",")
+            int(x)
+            int(y)
+        except ValueError:
+            print_error(f"{key} must be in x, y format")
+            return False
+    return True
 
 
 def print_error(message):

@@ -113,160 +113,153 @@ class Maze:
         if not (0 <= x < width and 0 <= y < height):
             raise ValueError(f"{name} must be inside maze bounds")
         
-    def get_neighbors(self, cell):  # get the neighbor cell of the current cell
-        neighbors = []
+        def get_neighbors(self, cell):  # get the neighbor cell of the current cell
+            neighbors = []
 
-        directions = [  # pick one of the 4 directions
-            (0, -1, "N"),
-            (1, 0, "E"),
-            (0, 1, "S"),
-            (-1, 0, "W")
-        ]
+            directions = [  # pick one of the 4 directions
+                (0, -1, "N"),
+                (1, 0, "E"),
+                (0, 1, "S"),
+                (-1, 0, "W")
+            ]
 
-        for dx, dy, direction in directions:
-            nx = cell.x + dx
-            ny = cell.y + dy
+            for dx, dy, direction in directions:
+                nx = cell.x + dx
+                ny = cell.y + dy
 
-            if 0 <= nx < self.width and 0 <= ny < self.height:
-                neighbor = self.grid[ny][nx]
+                if 0 <= nx < self.width and 0 <= ny < self.height:
+                    neighbor = self.grid[ny][nx]
 
-                if not neighbor.visited and (nx, ny) not in self.pattern_42:
+                    if not neighbor.visited and (nx, ny) not in self.pattern_42:
+                        neighbors.append((neighbor, direction))
+
+            return neighbors
+        
+
+        def get_all_neighbors(self, cell):
+            neighbors = []
+
+            directions = [
+                (0, -1, "N"),
+                (1, 0, "E"),
+                (0, 1, "S"),
+                (-1, 0, "W")
+            ]
+
+            for dx, dy, direction in directions:
+                nx = cell.x + dx
+                ny = cell.y + dy
+
+                if 0 <= nx < self.width and 0 <= ny < self.height:
+                    neighbor = self.grid[ny][nx]
                     neighbors.append((neighbor, direction))
 
-        return neighbors
+            return neighbors
+        
 
-    # Do we have two same functions or they are for different purpose
-    def get_all_neighbors(self, cell):
-        neighbors = []
+        def generate(self):
+            stack = []
+            current = self.entry  # start at the entry coordinate
+            current.visited = True
 
-        directions = [
-            (0, -1, "N"),
-            (1, 0, "E"),
-            (0, 1, "S"),
-            (-1, 0, "W")
-        ]
+            while True:
+                neighbors = self.get_neighbors(current)
 
-        for dx, dy, direction in directions:
-            nx = cell.x + dx
-            ny = cell.y + dy
+                if neighbors:
+                    next_cell, direction = random.choice(neighbors)
 
-            if 0 <= nx < self.width and 0 <= ny < self.height:
-                neighbor = self.grid[ny][nx]
-                neighbors.append((neighbor, direction))
+                    stack.append(current)
 
-        return neighbors
+                    self.remove_wall(current, next_cell, direction)
 
-    def generate(self):
-        stack = []
-        current = self.entry  # start at the entry coordinate
-        current.visited = True
+                    next_cell.visited = True  # set the next cell as 'visited'
+                    current = next_cell  # set the next cell as the current one
 
-        while True:
-            neighbors = self.get_neighbors(current)
-
-            if neighbors:
-                next_cell, direction = random.choice(neighbors)
-
-                stack.append(current)
-
-                self.remove_wall(current, next_cell, direction)
-
-                next_cell.visited = True  # set the next cell as 'visited'
-                current = next_cell  # set the next cell as the current one
-
-            elif stack:
-                current = stack.pop()
-
-            else:
-                break
-
-        # self.entry.walls["N"] = False
-        # self.exit.walls["S"] = False
-
-        if self.perfect == "False":
-            print("Imperfect maze")
-
-            nb_walls_to_break = int((self.width * self.height) * 0.1)
-            print("number of walls to remove :", nb_walls_to_break)
-
-            removed_wall = 0
-
-            while removed_wall < nb_walls_to_break:
-                cell = self.get_cell(
-                    random.randint(0, self.width - 1),
-                    random.randint(0, self.height - 1)
-                )
-                # print(cell.x, cell.y)
-
-                # directions = ["N", "S", "W", "E"]
-                # direction = random.choice(directions)
-                # print(direction)
-
-                neighbors = self.get_all_neighbors(cell)
-
-                valid_neighbors = [
-                    (n, d) for (n, d) in neighbors
-                    if cell.walls[d]
-                    and (cell.x, cell.y) not in self.pattern_42
-                    and (n.x, n.y) not in self.pattern_42
-                ]
-
-                if not valid_neighbors:
-                    continue
-
-                neighbor, direction = random.choice(valid_neighbors)
-
-                if cell == self.entry or cell == self.exit:
-                    continue
-
-                if not (self.is_corridor(cell) or self.is_corridor(neighbor)):
-                    continue
+                elif stack:
+                    current = stack.pop()
 
                 else:
-                    self.remove_wall(cell, neighbor, direction)
-                    removed_wall += 1
-                    # print("wall removed")
+                    break
+            if self.perfect_maze == "False":
+                print("Imperfect maze")
 
-    def is_corridor(self, cell):
-        open_walls = sum(not w for w in cell.walls.values())
-        return open_walls <= 2
+                nb_walls_to_break = int((self.width * self.height) * 0.1)
+                print("number of walls to remove :", nb_walls_to_break)
 
-    def remove_wall(self, current, next_cell, direction):
-        # remove a wall from a cell
-        # and the wall from the other (opposite) cell
-        opposite = {"N": "S", "S": "N", "W": "E", "E": "W"}
+                removed_wall = 0
 
-        current.walls[direction] = False
-        # destroys one wall of the current cell
-        next_cell.walls[opposite[direction]] = False
-        # destroys the opposite wall of the next cell
+                while removed_wall < nb_walls_to_break:
+                    cell = self.get_cell(
+                        random.randint(0, self.width - 1),
+                        random.randint(0, self.height - 1)
+                    )
+                
+                    neighbors = self.get_all_neighbors(cell)
 
-    def generate_pattern_42(self):
-        center_x = self.width // 2
-        center_y = self.height // 2
+                    valid_neighbors = [
+                        (n, d) for (n, d) in neighbors
+                        if cell.walls[d]
+                        and (cell.x, cell.y) not in self.pattern_42
+                        and (n.x, n.y) not in self.pattern_42
+                    ]
 
-        return [
-            (center_x - 3, center_y - 2),
-            (center_x - 3, center_y - 1),
-            (center_x - 3, center_y),
-            (center_x - 2, center_y),
-            (center_x - 1, center_y - 2),
-            (center_x - 1, center_y - 1),
-            (center_x - 1, center_y),
-            (center_x - 1, center_y + 1),
-            (center_x - 1, center_y + 2),
-            # '4'
+                    if not valid_neighbors:
+                        continue
 
-            (center_x + 1, center_y - 2),
-            (center_x + 1, center_y),
-            (center_x + 1, center_y + 1),
-            (center_x + 1, center_y + 2),
-            (center_x + 2, center_y - 2),
-            (center_x + 2, center_y),
-            (center_x + 2, center_y + 2),
-            (center_x + 3, center_y - 2),
-            (center_x + 3, center_y - 1),
-            (center_x + 3, center_y),
-            (center_x + 3, center_y + 2),
-            # '2'
-        ]
+                    neighbor, direction = random.choice(valid_neighbors)
+
+                    if cell == self.entry or cell == self.exit:
+                        continue
+
+                    if not (self.is_corridor(cell) or self.is_corridor(neighbor)):
+                        continue
+
+                    else:
+                        self.remove_wall(cell, neighbor, direction)
+                        removed_wall += 1
+                        # print("wall removed")
+
+        def is_corridor(self, cell):
+            open_walls = sum(not w for w in cell.walls.values())
+            return open_walls <= 2
+        
+
+        def remove_wall(self, current, next_cell, direction):
+            # remove a wall from a cell
+            # and the wall from the other (opposite) cell
+            opposite = {"N": "S", "S": "N", "W": "E", "E": "W"}
+
+            current.walls[direction] = False
+            # destroys one wall of the current cell
+            next_cell.walls[opposite[direction]] = False
+            # destroys the opposite wall of the next cell
+
+        def generate_pattern_42(self):
+            center_x = self.width // 2
+            center_y = self.height // 2
+
+            return [
+                (center_x - 3, center_y - 2),
+                (center_x - 3, center_y - 1),
+                (center_x - 3, center_y),
+                (center_x - 2, center_y),
+                (center_x - 1, center_y - 2),
+                (center_x - 1, center_y - 1),
+                (center_x - 1, center_y),
+                (center_x - 1, center_y + 1),
+                (center_x - 1, center_y + 2),
+                # '4'
+
+                (center_x + 1, center_y - 2),
+                (center_x + 1, center_y),
+                (center_x + 1, center_y + 1),
+                (center_x + 1, center_y + 2),
+                (center_x + 2, center_y - 2),
+                (center_x + 2, center_y),
+                (center_x + 2, center_y + 2),
+                (center_x + 3, center_y - 2),
+                (center_x + 3, center_y - 1),
+                (center_x + 3, center_y),
+                (center_x + 3, center_y + 2),
+                # '2'
+            ]

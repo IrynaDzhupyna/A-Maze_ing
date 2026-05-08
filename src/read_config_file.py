@@ -209,8 +209,13 @@ def modif_data(file_name: str, modif: str, maze: MazeGenerator) -> None:
                     line = f"WIDTH={value}\n"
                 new_lines.append(line)
 
-            with open(file_name, 'w') as f:
-                f.writelines(new_lines)
+            try:
+                with open(file_name, 'w') as f:
+                    f.writelines(new_lines)
+            except OSError:
+                print_error("Could not write to the file")
+                return
+
 
     elif modif == "2":
         print("enter the new height:")
@@ -237,21 +242,23 @@ def modif_data(file_name: str, modif: str, maze: MazeGenerator) -> None:
                 if line.startswith("HEIGHT="):
                     line = f"HEIGHT={value}\n"
                 new_lines.append(line)
-
-            with open(file_name, 'w') as f:
-                f.writelines(new_lines)
+            try:
+                with open(file_name, 'w') as f:
+                    f.writelines(new_lines)
+            except OSError:
+                print_error("Could not write to the file")
+                return
 
     elif modif == "3":
         print("enter the new entry coordinates:(x,y)")
         try:
             value = input("> ")
             x,y = value.split(",")
+            x = int(x)
+            y = int(y)
         except ValueError:
             print_error("Enter coordinates in x, y format")
             return
-        
-        x = int(x)
-        y = int(y)
 
         if x < 0 or x > maze_obj.width:
             print_error(f"x must be between 0 and {maze_obj.width}")
@@ -273,21 +280,23 @@ def modif_data(file_name: str, modif: str, maze: MazeGenerator) -> None:
             if line.startswith("ENTRY="):
                 line = f"ENTRY={x},{y}\n"
             new_lines.append(line)
-
-        with open(file_name, 'w') as f:
-            f.writelines(new_lines)
+        try:
+            with open(file_name, 'w') as f:
+                f.writelines(new_lines)
+        except OSError:
+            print_error("Could not write to the file")
+            return
 
     elif modif == "4":
         print("enter the new exit coordinates:(x,y)")
         try:
             value = input("> ")
             x,y = value.split(",")
+            x = int(x)
+            y = int(y)
         except ValueError:
             print_error("Enter coordinates in x, y format")
             return
-
-        x = int(x)
-        y = int(y)
 
         if x < 0 or x > maze_obj.width:
             print_error(f"x must be between 0 and {maze_obj.width}")
@@ -310,8 +319,12 @@ def modif_data(file_name: str, modif: str, maze: MazeGenerator) -> None:
                 line = f"EXIT={x},{y}\n"
             new_lines.append(line)
 
-        with open(file_name, 'w') as f:
-            f.writelines(new_lines)
+        try:
+            with open(file_name, 'w') as f:
+                f.writelines(new_lines)
+        except OSError:
+            print_error("Could not write to the file")
+            return
 
     elif modif == "5":
         print("enter the seed number:")
@@ -322,5 +335,9 @@ def modif_data(file_name: str, modif: str, maze: MazeGenerator) -> None:
                 line = f"SEED={value}\n"
             new_lines.append(line)
 
-        with open(file_name, 'w') as f:
-            f.writelines(new_lines)
+        try:
+            with open(file_name, 'w') as f:
+                f.writelines(new_lines)
+        except OSError:
+            print_error("Could not write to the file")
+            return

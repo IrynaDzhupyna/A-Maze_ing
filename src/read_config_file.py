@@ -1,7 +1,8 @@
 import sys
+from mazegen import MazeGenerator
 
 
-def read_file(file_name) -> str|None:
+def read_file(file_name: str) -> str|None:
     """
         Reads and returns the content of the file
 
@@ -28,7 +29,7 @@ def read_file(file_name) -> str|None:
         return content
 
 
-def fill_the_dict(content) -> dict[str, str]| None:
+def fill_the_dict(content: str) -> dict[str, str]| None:
     """
         Parses the file into dictionary of key-value pairs.
     
@@ -74,6 +75,7 @@ def validate_config(data_dict: dict) -> bool:
             return False
         
     if data_dict["PERFECT"] not in ("True", "False"):
+        print_error(f"PERFECT must be True or False")
         return False
     
     for key in ("ENTRY", "EXIT"):
@@ -87,7 +89,7 @@ def validate_config(data_dict: dict) -> bool:
     return True
 
 
-def print_error(message) -> None:
+def print_error(message: str) -> None:
     """ Prints an error message to stderr
     
         Args:
@@ -102,14 +104,32 @@ def print_error(message) -> None:
     print(f"{message}", file=sys.stderr)
 
 
-def modif_file(file_name, value):
-    
-    with open(file_name, 'r') as f:
-        lines = f.readlines()
+def modif_file(file_name: str, value: str) -> None:
+    """
+        Updates the value of the "PERFECT" key in configuration file.
+
+        It reads the file line by line, replaces the line starts with "PERFECT=" with the new value
+        and writes content back to a file.
+        
+        Args:
+            file_name (str): path to a file send as string
+            value (str): New value to assign the "PERFECT" key
+             
+        Return:
+            None
+             
+        Side Effects:
+            Modifies the file by owerwriting its content. """
+    try:
+        with open(file_name, 'r') as f:
+            lines = f.readlines()
+    except OSError:
+        print_error("Could not open the file")
+        return
 
     new_lines = []
     for line in lines:
-        if line.startswith("PERFECT="):
+        if line.strip().startswith("PERFECT="):
             line = f"PERFECT={value}\n"
         new_lines.append(line)
 
@@ -117,10 +137,34 @@ def modif_file(file_name, value):
             f.writelines(new_lines)
 
 
-def modif_data(file_name, modif, maze):
-    
-    with open(file_name, 'r') as f:
-        lines = f.readlines()
+def modif_data(file_name: str, modif: str, maze: MazeGenerator) -> None:
+    """
+        Modifies a configuration file based on user input and maze constrains.
+
+        Depending on the value of "modif" the function
+        updates one of the parameters in the file:
+        "1" - WIDTH
+        "2" - HEIGHT
+        "3" - ENTRY
+        "4" - EXIT
+        "5" - SEED
+
+        Function reads the file, updates the corresponding line,
+        and writes the modified content back to file.
+
+        Args:
+            file_name (str): path to the configuration file
+            modif (str): option indicating which parameter to modify
+            maze (MazeGenerator): 
+
+        Returns:
+            
+    """
+    try:
+        with open(file_name, 'r') as f:
+            lines = f.readlines()
+    except OSError:
+        print_error("Could not open the file")
 
     new_lines = []
 
@@ -197,7 +241,7 @@ def modif_data(file_name, modif, maze):
             f.writelines(new_lines)
 
     elif modif == "4":
-        print("enter the new exit coordinates:(x,y)")
+        print("enter the new exit coordinates:(x,y)")following
         value = input("> ")
         x,y = value.split(",")
 

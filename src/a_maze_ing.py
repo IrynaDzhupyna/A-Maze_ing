@@ -126,9 +126,8 @@ def main():
             print(path)
 
         elif choice == "4":
-            generator.perfect_maze = not generator.perfect_maze
-            print("Perfect maze = ", generator.perfect_maze)
-            modif_file(file_name, generator.perfect_maze)
+            current_perfect = data_dict["PERFECT"] == "True"
+            modif_file(file_name, not current_perfect)
             
             content = read_file(file_name)
             data_dict = fill_the_dict(content)
@@ -136,8 +135,9 @@ def main():
             generator = make_generator(data_dict)
             generator.generate()
 
-            display(generator)
-            display_hex(generator)
+            maze_obj = generator.get_maze()
+            display(maze_obj)
+            display_hex(maze_obj)
 
         elif choice == "5":
             print("=== Pick your color ! ===\n")
@@ -152,8 +152,11 @@ def main():
 
             if color == "q":
                 break
-
-            display_with_color(generator, color)
+            try:
+                maze_obj = generator.get_maze()
+            except ValueError:
+                continue
+            display_with_color(maze_obj, color)
         
         elif choice == "q":
             break

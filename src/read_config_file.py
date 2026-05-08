@@ -103,7 +103,7 @@ def print_error(message: str) -> None:
     """
     print(f"{message}", file=sys.stderr)
 
-
+# added try/except to cover OSError
 def modif_file(file_name: str, value: str) -> None:
     """
         Updates the value of the "PERFECT" key in configuration file.
@@ -136,7 +136,10 @@ def modif_file(file_name: str, value: str) -> None:
     with open(file_name, 'w') as f:
             f.writelines(new_lines)
 
-
+# raising ValueError was changed to print_error() + return
+#   a_maze_ing.py calls modif_data. We don't have try/except there for this call so a_maze_ing.py it doesn't catches it
+#   so the error bubbles the way up and crashes the program with traceback
+#       Rule of thumb: raise when you expect the caller to handle the error
 def modif_data(file_name: str, modif: str, maze: MazeGenerator) -> None:
     """
         Modifies a configuration file based on user input and maze constrains.
@@ -165,21 +168,31 @@ def modif_data(file_name: str, modif: str, maze: MazeGenerator) -> None:
             lines = f.readlines()
     except OSError:
         print_error("Could not open the file")
+        return
 
     new_lines = []
-
+    # get width, height and others from MazeGenerator maze_generate()
+    # We have an error message there so we just return
+    try:
+        maze_obj = maze.get_maze()
+    except ValueError:
+        return
+    
     if modif == "1":
         print("enter the new width:")
         value = int(input("> "))
 
         if value < 9 or value >= 429:
-            raise ValueError("Width must be at least 9 and at most 429")
+            print_error("Width must be at least 9 and at most 429")
+            return
 
-        elif maze.height*value >= 32000:
-            raise ValueError("Grid cannot have more than 32000 cells")
+        elif maze_obj.height*value >= 32000:
+            print_error("Grid cannot have more than 32000 cells")
+            return
 
-        elif value <= maze.entry.x or value <= maze.exit.x:
-            raise ValueError("Width is too small")
+        elif value <= maze_obj.entry.x or value <= maze_obj.exit.x:
+            print_error("Width is too small")
+            return
         
         else:
             for line in lines:
@@ -195,13 +208,16 @@ def modif_data(file_name: str, modif: str, maze: MazeGenerator) -> None:
         value = int(input("> "))
 
         if value < 7 or value >= 429:
-            raise ValueError("Height must be at least 7 and at most 429")
+            print_error("Height must be at least 7 and at most 429")
+            return
 
-        elif value*maze.width >= 32000:
-            raise ValueError("Grid cannot have more than 32000 cells")
+        elif value * maze_obj.width >= 32000:
+            print_error("Grid cannot have more than 32000 cells")
+            return
 
-        elif value <= maze.entry.y or value <= maze.exit.y:
-            raise ValueError("Height is too small")
+        elif value <= maze_obj.entry.y or value <= maze_obj.exit.y:
+            print_error("Height is too small")
+            return
         
         else:
             for line in lines:
@@ -220,17 +236,21 @@ def modif_data(file_name: str, modif: str, maze: MazeGenerator) -> None:
         x = int(x)
         y = int(y)
 
-        if x < 0 or x > maze.width:
-            raise ValueError(f"x must be between 0 and {maze.width}")
+        if x < 0 or x > maze_obj.width:
+            print_error(f"x must be between 0 and {maze_obj.width}")
+            return
 
-        elif y < 0 or y > maze.height:
-            raise ValueError(f"y must be between 0 and {maze.height}")
+        elif y < 0 or y > maze_obj.height:
+            print_error(f"y must be between 0 and {maze_obj.height}")
+            return
         
-        elif x == maze.exit.x and y == maze.exit.y:
-            raise ValueError("the entry and the exit cannot share the same location")
+        elif x == maze_obj.exit.x and y == maze_obj.exit.y:
+            print_error("the entry and the exit cannot share the same location")
+            return
 
-        elif (x,y) in maze.pattern_42 :
-            raise ValueError("the entry cannot be in the 42 pattern")
+        elif (x,y) in maze_obj.pattern_42 :
+            print_error("the entry cannot be in the 42 pattern")
+            return
         
         for line in lines:
             if line.startswith("ENTRY="):
@@ -241,24 +261,28 @@ def modif_data(file_name: str, modif: str, maze: MazeGenerator) -> None:
             f.writelines(new_lines)
 
     elif modif == "4":
-        print("enter the new exit coordinates:(x,y)")following
+        print("enter the new exit coordinates:(x,y)")
         value = input("> ")
         x,y = value.split(",")
 
         x = int(x)
         y = int(y)
 
-        if x < 0 or x > maze.width:
-            raise ValueError(f"x must be between 0 and {maze.width}")
+        if x < 0 or x > maze_obj.width:
+            print_error(f"x must be between 0 and {maze_obj.width}")
+            return
 
-        elif y < 0 or y > maze.height:
-            raise ValueError(f"y must be between 0 and {maze.height}")
+        elif y < 0 or y > maze_obj.height:
+            print_error(f"y must be between 0 and {maze_obj.height}")
+            return
         
-        elif x == maze.entry.x and y == maze.entry.y:
-            raise ValueError("the entry and the exit cannot share the same location")
+        elif x == maze_obj.entry.x and y == maze_obj.entry.y:
+            print_error("the entry and the exit cannot share the same location")
+            return
         
-        elif (x,y) in maze.pattern_42 :
-            raise ValueError("the exit cannot be in the 42 pattern")
+        elif (x,y) in maze_obj.pattern_42 :
+            print_error("the exit cannot be in the 42 pattern")
+            return
 
         for line in lines:
             if line.startswith("EXIT="):

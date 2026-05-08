@@ -1,7 +1,20 @@
 import sys
 
 
-def read_file(file_name):
+def read_file(file_name) -> str|None:
+    """
+        Reads and returns the content of the file
+
+        Args:
+            file_name (str): Path to the file to be read
+        
+        Returns:
+            str: the file content as string if successful
+            None: if an error occures
+
+        Side Effects:
+            Prints error message if the file cannot be opened
+        """
     try:
         with open(file_name, 'r') as f:
             content = f.read()
@@ -15,8 +28,23 @@ def read_file(file_name):
         return content
 
 
-def fill_the_dict(content):
-    """Parses the file into dictionary"""
+def fill_the_dict(content) -> dict[str, str]| None:
+    """
+        Parses the file into dictionary of key-value pairs.
+    
+        Each non-empty line that does not start with "#" is expected to be in the format "key=value". 
+        Leading and trailing is removed from both keys and values.
+
+        Args:
+            content (str): file content as a single string
+             
+        Returns:
+            dict[str: str]: a dictionary of parsed key-value pairs if successful
+            None: if parsing fails
+            
+        Side Effects:
+            calls print_error() if a line is not in the expected format
+    """
     lines = content.split("\n")
 
     data_dict = {}
@@ -59,7 +87,18 @@ def validate_config(data_dict: dict) -> bool:
     return True
 
 
-def print_error(message):
+def print_error(message) -> None:
+    """ Prints an error message to stderr
+    
+        Args:
+            message(str): message explaining error
+            
+        Returns:
+            None
+        
+        Side Effects:
+            prints message
+    """
     print(f"{message}", file=sys.stderr)
 
 

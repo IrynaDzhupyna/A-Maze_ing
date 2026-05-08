@@ -185,7 +185,11 @@ def modif_data(file_name: str, modif: str, maze: MazeGenerator) -> None:
     
     if modif == "1":
         print("enter the new width:")
-        value = int(input("> "))
+        try:
+            value = int(input("> "))
+        except ValueError:
+            print_error("Enter a valid number")
+            return
 
         if value < 9 or value >= 429:
             print_error("Width must be at least 9 and at most 429")
@@ -239,8 +243,12 @@ def modif_data(file_name: str, modif: str, maze: MazeGenerator) -> None:
 
     elif modif == "3":
         print("enter the new entry coordinates:(x,y)")
-        value = input("> ")
-        x,y = value.split(",")
+        try:
+            value = input("> ")
+            x,y = value.split(",")
+        except ValueError:
+            print_error("Enter coordinates in x, y format")
+            return
         
         x = int(x)
         y = int(y)
@@ -271,8 +279,12 @@ def modif_data(file_name: str, modif: str, maze: MazeGenerator) -> None:
 
     elif modif == "4":
         print("enter the new exit coordinates:(x,y)")
-        value = input("> ")
-        x,y = value.split(",")
+        try:
+            value = input("> ")
+            x,y = value.split(",")
+        except ValueError:
+            print_error("Enter coordinates in x, y format")
+            return
 
         x = int(x)
         y = int(y)

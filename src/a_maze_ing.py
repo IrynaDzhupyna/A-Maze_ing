@@ -1,12 +1,12 @@
 import sys
-import random
-from maze_definition import Maze
-from read_config_file import fill_the_dict, print_error, read_file, modif_file, modif_data
+from mazegen import MazeGenerator
+from read_config_file import fill_the_dict, print_error, read_file, modif_file, modif_data, validate_config
 # from typing import List, Dict, Tuple
 from get_output_file import write_output_file
 # for BFS queue
 from maze_solver import solve
 from maze_displayer import display, display_hex, display_after_solve, display_with_color
+
 
 WHITE = '\033[97m'
 RED = '\033[31m'
@@ -17,9 +17,9 @@ YELLOW = '\033[33m'
 RESET = '\033[0m'
 
 def main():
+
     if len(sys.argv) != 2:
         return print_error("Not enough arguments")
-    # should we check the name == "config.txt" ?
     
     file_name = sys.argv[1]
     content = read_file(file_name)
@@ -28,11 +28,25 @@ def main():
         return print_error("Problem with reading the file")
     
     data_dict = fill_the_dict(content)
+
+    entry_x, entry_y = data_dict["ENTRY"].split(",")
+    exit_x, exit_y = data_dict["EXIT"].split(",")
+
+    generator = MazeGenerator(
+        width = int(data_dict["WIDTH"]),
+        height = int(data_dict["HEIGHT"]),
+        entry_x = int(entry_x),
+        entry_y = int(entry_y),
+        exit_x = int(exit_x),
+        exit_y = int(exit_y),
+        perfect = data_dict["PERFECT"] == "True",
+        seed = data_dict["SEED"]
+    )
     
     # random.seed(int(data_dict["SEED"])) # sets the random num gen starting point from seed(config.txt), maze is reproducible
-    
-    maze = Maze(int(data_dict["WIDTH"]), int(data_dict["HEIGHT"]), data_dict)
-    seed = int(data_dict["SEED"])
+    #    this 2 lnes we dont need anymore
+    # maze = Maze(int(data_dict["WIDTH"]), int(data_dict["HEIGHT"]), data_dict)
+    # seed = int(data_dict["SEED"])
     # maze.generate()  # generate a unique path throught all the cells with DFS
 
     print("===========================================")
@@ -68,7 +82,7 @@ def main():
             if modif == "q":
                 break
 
-            modif_data(file_name, modif, maze)
+            modif_data(file_name, modif, generator)
 
             content = read_file(file_name)
                 
@@ -77,35 +91,38 @@ def main():
             
             data_dict = fill_the_dict(content)
 
-            maze = Maze(int(data_dict["WIDTH"]), int(data_dict["HEIGHT"]), data_dict)
+            generator = MazeGenerator(int(data_dict["WIDTH"]), int(data_dict["HEIGHT"]), data_dict)
             seed = int(data_dict["SEED"])
 
 
         elif choice == "2":
-            maze.generate(seed)
-            display(maze)  # display the grid on the terminal
-            display_hex(maze)
+            generator.generate()
+            maze_obj = generator.get_maze()
+            display(maze_obj)
+            display_hex(maze_obj)
             
         elif choice == "3":
-            path = solve(maze)
-            display_after_solve(maze, path)  # display the grid on the terminal
-            display_hex(maze)
+            maze_obj = generator.get_maze()
+            path = solve(maze_obj)
+            display_after_solve(maze_obj, path)  # display the grid on the terminal
+            display_hex(maze_obj)
             print(path)
 
         elif choice == "4":
-            maze.perfect_maze = not maze.perfect_maze
-            print("Perfect maze = ", maze.perfect_maze)
-            modif_file(file_name, maze.perfect_maze)
+            generator.perfect_maze = not generator.perfect_maze
+            print("Perfect maze = ", generator.perfect_maze)
+            modif_file(file_name, generator.perfect_maze)
             
             content = read_file(file_name)
             data_dict = fill_the_dict(content)
 
-            maze = Maze(int(data_dict["WIDTH"]), int(data_dict["HEIGHT"]), data_dict)
-            
-            maze.generate(seed)
+            generator = MazeGenerator(int(data_dict["WIDTH"]), int(data_dict["HEIGHT"]), data_dict)
+            # we dont need it anymore
+            #maze.generate(seed)
+            generator.generate()
 
-            display(maze)
-            display_hex(maze)
+            display(generator)
+            display_hex(generator)
 
         elif choice == "5":
             print("=== Pick your color ! ===\n")
@@ -121,7 +138,7 @@ def main():
             if color == "q":
                 break
 
-            display_with_color(maze, color)
+            display_with_color(generator, color)
         
         elif choice == "q":
             break

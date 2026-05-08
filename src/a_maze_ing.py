@@ -16,6 +16,33 @@ YELLOW = '\033[33m'
 
 RESET = '\033[0m'
 
+def make_generator(data_dict: dict[str, str]) -> MazeGenerator:
+    """
+    Creates a MazeGenerator from parsed config dictionary. 
+
+    Args:
+        data_dict (dict[str, str]): dictionary of key:values configurations
+
+    Returns: 
+        MazeGenerator: A new MazeGenerator instance
+    """
+    
+    entry_x, entry_y = data_dict["ENTRY"].split(",")
+    exit_x, exit_y = data_dict["EXIT"].split(",")
+
+    generator = MazeGenerator(
+        width = int(data_dict["WIDTH"]),
+        height = int(data_dict["HEIGHT"]),
+        entry_x = int(entry_x),
+        entry_y = int(entry_y),
+        exit_x = int(exit_x),
+        exit_y = int(exit_y),
+        perfect = data_dict["PERFECT"] == "True",
+        seed = int(data_dict["SEED"])
+    )
+    return generator
+
+
 def main():
 
     if len(sys.argv) != 2:
@@ -28,20 +55,10 @@ def main():
         return print_error("Problem with reading the file")
     
     data_dict = fill_the_dict(content)
+    if not data_dict or not validate_config(data_dict):
+        return
 
-    entry_x, entry_y = data_dict["ENTRY"].split(",")
-    exit_x, exit_y = data_dict["EXIT"].split(",")
-
-    generator = MazeGenerator(
-        width = int(data_dict["WIDTH"]),
-        height = int(data_dict["HEIGHT"]),
-        entry_x = int(entry_x),
-        entry_y = int(entry_y),
-        exit_x = int(exit_x),
-        exit_y = int(exit_y),
-        perfect = data_dict["PERFECT"] == "True",
-        seed = data_dict["SEED"]
-    )
+    generator = make_generator(data_dict)
     
     # random.seed(int(data_dict["SEED"])) # sets the random num gen starting point from seed(config.txt), maze is reproducible
     #    this 2 lnes we dont need anymore
@@ -91,8 +108,8 @@ def main():
             
             data_dict = fill_the_dict(content)
 
-            generator = MazeGenerator(int(data_dict["WIDTH"]), int(data_dict["HEIGHT"]), data_dict)
-            seed = int(data_dict["SEED"])
+            generator = make_generator(data_dict)
+            # seed = int(data_dict["SEED"])
 
 
         elif choice == "2":
@@ -116,9 +133,7 @@ def main():
             content = read_file(file_name)
             data_dict = fill_the_dict(content)
 
-            generator = MazeGenerator(int(data_dict["WIDTH"]), int(data_dict["HEIGHT"]), data_dict)
-            # we dont need it anymore
-            #maze.generate(seed)
+            generator = make_generator(data_dict)
             generator.generate()
 
             display(generator)

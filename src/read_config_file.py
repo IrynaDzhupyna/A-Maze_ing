@@ -133,8 +133,12 @@ def modif_file(file_name: str, value: str) -> None:
             line = f"PERFECT={value}\n"
         new_lines.append(line)
 
-    with open(file_name, 'w') as f:
-            f.writelines(new_lines)
+    try:
+        with open(file_name, 'w') as f:
+                f.writelines(new_lines)
+    except OSError:
+        print_error("Could not write to the file")
+        return
 
 # raising ValueError was changed to print_error() + return
 #   a_maze_ing.py calls modif_data. We don't have try/except there for this call so a_maze_ing.py it doesn't catches it
@@ -158,9 +162,10 @@ def modif_data(file_name: str, modif: str, maze: MazeGenerator) -> None:
         Args:
             file_name (str): path to the configuration file
             modif (str): option indicating which parameter to modify
-            maze (MazeGenerator): 
+            maze (MazeGenerator): Maze object from MazeGenerator
 
         Returns:
+            None
             
     """
     try:
@@ -205,7 +210,11 @@ def modif_data(file_name: str, modif: str, maze: MazeGenerator) -> None:
 
     elif modif == "2":
         print("enter the new height:")
-        value = int(input("> "))
+        try:
+            value = int(input("> "))
+        except ValueError:
+            print_error("Enter a valid number")
+            return
 
         if value < 7 or value >= 429:
             print_error("Height must be at least 7 and at most 429")

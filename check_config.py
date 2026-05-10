@@ -35,7 +35,7 @@ def fill_the_dict(content):
 
 
 
-def main():
+'''def main():
     if len(sys.argv) != 2:
         return print_error("Not enough argumens")
     # should we check the name == "config.txt"
@@ -48,4 +48,4 @@ def main():
     print(our_dict)
 
 if __name__ == "__main__":
-    main()
+    main()'''

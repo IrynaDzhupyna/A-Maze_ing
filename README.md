@@ -1,190 +1,79 @@
-*This project has been created as part of the 42 curriculum by irdzhupy and glegrand*
+Package - mazegen
+Inside we have:
+    - maze_generator.py
+    - maze.py 
+    - cell.py
+maze && cell are internal. MazeGenerate - API
+# __init__.py
+    exposes MazeGenerator cleanly
 
-# DESCRIPTION
+# maze_generator.py
+Inside:
+    MazeGenerator class
+        the user-facing class that wraps Maze
 
-### Rules of the project 
+What it does:
+- takes parameters of maze to generate
+- kicks off generation
+- exposes the result
 
-- The project must be written in **Python 3.10**.
-- The project must adhere to the **flake8** coding standard.
+# maze.py
+Inside:
+    Maze class
+        the grid, validation, the recursive backtracking algorithm, the "42" pattern, wall removal for imperfect maze
 
+What it does:
+- contains internal data structure representing the grid
 
-| **Key** | **Description** | **Example** |
-| ------ | ----- | ------ |
-| WIDTH | Maze width | WIDTH=20 |
-| HEIGHT | Maze height | HEIGHT=15 |
-| ENTRY | Entry coordinates (x,y) | ENTRY=0,0 |
-| EXIT | Exit coordinates (x,y) | EXIT = 19,14 |
-| OUTPUT_FILE | Output filename | OUTPUT_FILE=maze.txt |
-| PERFECT | is the maze perfect ? | PERFECT=True |
+"""Write what exactly?"""
 
-The maze is basically a grid of the following size : width x height.
-We set up the following condition :
-- width cannot be over 429 cells long
-- height cannot be over 429 cells high
-- the grid cannot have more than 32000 cells
+# cell.py
+Inside:
+    Cell class
+        a signle cell with 4 walls (N/E/S/W) and hex encoder
 
-In order to be able to set up the '42' pattern in our grid, we added as well :
-- width cannot be under 7 cells long
-- height cannot be under 9 cells high
+What it does:
+- contains internal building blocks
 
-And the *entry* cell and the *exit* cell cannot be in the 42 pattern.
+"""Write what exactly?"""
 
-Example :
-
-| **Key** | **Value** |
-| ------- | --------- |
-| WIDTH | 20 |
-| HEIGHT | 15 |
-| ENTRY | 0,0 |
-| EXIT | 19,14 |
-| PERFECT | True |
-
-
-
-```
-+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
-| A |   |                       |                       |       |           |
-+   +   +   +   +---+---+---+   +   +---+   +---+---+   +   +   +---+---+   +
-|   |       |   |               |   |   |       |   |       |   |       |   |
-+   +---+---+   +   +---+---+---+   +   +---+   +   +---+---+   +   +   +   +
-|           |   |   |           |           |   |                   |       |
-+---+---+   +   +   +   +---+   +---+---+   +   +---+   +---+---+---+---+   +
-|           |   |   |   |           |       |       |           |       |   |
-+   +---+---+   +---+   +   +---+---+   +---+---+   +---+---+---+   +   +---+
-|   |           |       |           |   |       |           |       |       |
-+   +---+   +   +   +---+---+---+   +   +   +---+---+---+   +   +---+---+   +
-|       |   |   |   |           |       |           |   |       |           |
-+---+   +   +---+   +   +---+   +---+---+---+   +   +   +---+---+   +---+   +
-|       |   |       |   |                       |       |           |   |   |
-+   +---+   +   +---+   +   +---+---+---+---+---+---+---+   +---+---+   +   +
-|       |   |   |   |   |XXX    |XXX     XXX XXX XXX    |           |       |
-+---+   +   +   +   +   +---+   +   +---+---+---+---+   +---+---+   +---+---+
-|   |   |       |       |XXX|   |XXX|       |    XXX|           |   |       |
-+   +   +   +---+   +---+   +   +   +---+   +   +   +---+---+   +   +   +   +
-|   |   |   |   |        XXX|XXX|XXX    |XXX XXX|XXX        |   |       |   |
-+   +   +   +   +---+   +---+   +---+   +---+---+---+   +---+   +---+---+   +
-|       |   |   |       |        XXX|    XXX        |   |       |           |
-+   +---+   +   +   +---+   +---+   +---+---+---+   +   +   +---+   +---+   +
-|   |   |   |       |   |   |    XXX|    XXX|XXX XXX|               |   |   |
-+   +   +   +---+   +   +   +   +---+   +   +   +---+---+---+---+---+   +   +
-|   |           |   |   |   |   |       |   |           |               |   |
-+   +---+---+   +   +   +   +   +   +---+   +---+---+   +---+---+   +   +   +
-|       |   |   |       |   |   |   |       |       |       |       |   |   |
-+---+   +   +   +---+---+   +   +   +   +---+   +   +---+   +   +---+---+   +
-|   |   |   |               |   |   |   |       |           |   |           |
-+   +   +   +   +---+---+---+   +   +   +   +---+---+---+---+   +   +---+---+
-|   |   |       |       |   |   |   |       |       |               |       |
-+   +   +---+---+   +   +   +   +   +---+---+   +---+   +---+---+---+---+   +
-|   |               |   |   |   |   |                   |               |   |
-+   +---+---+---+---+   +   +   +   +---+   +---+---+---+   +---+---+   +   +
-|                   |   |       |       |   |           |   |       |       |
-+   +---+---+---+   +   +---+---+---+   +   +---+   +   +   +   +---+---+   +
-|               |                       |           |       |             B |
-+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
-```
-
-The maze must be written in the output file using one hexadecimal digit per cell, where each digit encodes which walls are closed:
-
-| **Bit** | **Direction** |
-| ------- | ------------- |
-| 0 (LSB) | North |
-| 1 | East |
-| 2 | South |
-| 3 | West |
-
-A wall being closed sets the bit to 1, open means 0. We then have 16 different cases from 0000 (all 4 walls are opened) to 1111 (all 4 walls are closed).
-
-### Thinking and buildings
-
-In this chapter, we will describe our ideas, how we proceed and how we code this project.
-
-First of all, a maze is a grid of x * y cells, with x being the *width* and y the *height* of the grid.
-
-Each cell of this grid has 4 bytes, representing the 4 walls of it : north "N", south "S", east "E" and west "W". Every byte has 2 values : either 0 when it's opened (no wall) or 1 when there is a wall. Every cell has as well a unique location, represented as a tuple (x,y).
-
-We can then define a class simply with a class :
-class Cell:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-        self.visited = False
-        self.walls = {
-            "N": True,
-            "S": True,
-            "E": True,
-            "W": True
-        }
+This separation adds simplisity for users.
 
 
-# INSTRCUTIONS
+## Maze class
 
-The program must be run with the following command :
-    `python3 a_maze_ing.py config.txt`
+The subject doesn't specify the minimum width/height of maze, but subject says "it must fit the "42" pattern.
 
-The Makefile should give the following instructions :
+Module level constants:
+MIN_WIDTH_FOR_PATTERN = 7
+MIN_HEIGHT_FOR_PATTERN = 5
 
-    `make install`      #installs the package editable + dev tools
-    `make run`          #runs with config.txt
-    `make lint`         #flake8 + mypy
-    `make lint-strict`  #flake8 + mypy --strict
-    `make build`        #produces mazegen-1.0.0-*.wh1 + .tar.gz in dist/
-    `make clean`        #removes caches and generated artefacts
+Why 7 && 5:
+    Width:
+        - Pattern needs center_x + 3 < width
+        - center_x = width // 2
+        - so (width // 2) + 3 < width
+        width = 7: 3 + 3 = 6 < 7
+
+    Height:
+        - Pattern needs center_y + 2 < height
+        - center_y = heigth // 2
+        - so (height // 2) + 2 < height
+        height = 5: (5 // 2) + 2 = 2 + 2 = 4 < 5
+
+Later it could be changed if pattern design will be different 
 
 
-# BFS (Breadth-First-Search)
+## Hatching
 
-Finds the fastest way to solve the maze.
-It explores layers by layers (distance = 1, then 2, then 3...)
-The first time you reach the exit, it's automatically the shortest path
-Node - cell(x,y)
-Neighbor is a cell adjacent (N, E, S, W) with no wall in between.
+Hatching - build tool that creates .whl package
+build-backend - mean whiich tool does the actual building. There are several options - hatching, setuptool, flit. 
+Hatching works well with uv
 
-## Check current walls before move
+To use - install
+`uv add hatching --dev 
 
-### North:
-- Boundary: y > 0
-- Wall: North wall of current cell is open
-- Move: (x, y - 1)
 
-### East:
-- Boundary: x + 1 < width
-- Wall: East wall of current cell is open
-- Move: (x + 1, y)
-
-### South:
-- Boundary: y + 1 < height
-- Wall: South wall of current cell is open
-- Move: (x, y + 1)
-
-### West:
-- Boundary: x > 0
-- Wall: West wall of current cell is open
-- Move: (x - 1, y)
-
-Stop when exit_coordinates are reached. 
-
-## Design:
-
-Each cell remembers "I came from previous cell"
-
-Store: 
-- only (x, y)
-- and keep a parent dictionary 
-
-### Parent Dictionary
-
-parent[(child_x, child_y)] = (parent_x, parent_y)
-
-# RESSOURCES
-
-this [GitHub](https://github.com/r3dBust3r/42-a-maze-ing)
-
-this [GitHub](https://github.com/M4F-S/Python-/tree/main/course/amazing-maze) as well 
-
-good [article](https://aryanab.medium.com/maze-generation-recursive-backtracking-5981bc5cc766) about Recursive Backtracking Algorithm 
-
-General [overview](https://jbinternational.co.uk/article/view/1366) git team work 
-
-Very useful artcile about the different Git [commands](https://www.datacamp.com/blog/git-commands?utm_cid=19589720821&utm_aid=152984011134&utm_campaign=230119_1-ps-other~dsa-tofu~all_2-b2c_3-emea_4-prc_5-na_6-na_7-le_8-pdsh-go_9-nb-e_10-na_11-na&utm_loc=9043091-&utm_mtd=-c&utm_kw=&utm_source=google&utm_medium=paid_search&utm_content=ps-other~emea-en~dsa~tofu~blog~data-engineering&gad_source=1&gad_campaignid=19589720821&gclid=CjwKCAjwhqfPBhBWEiwAZo196g58OT_24cZ07ACLZgSU2a4v6nKhyMlkmBGR6xKwfJAo9rTTRHbs3RoCvawQAvD_BwE)
-
-For a better understanding about uv in Python, we used this [article](https://realpython.com/python-uv/)
+How it works:
+    1. Get Maze object
+        `maze_obj = maze.get_maze()`

@@ -140,7 +140,7 @@ def main():
             path = solve(maze_obj)
             display(maze_obj)
             display_hex(maze_obj)
-            write_output_file(data_dict["OUTPUT_File"], maze_obj, path)
+            write_output_file(data_dict["OUTPUT_FILE"], maze_obj, path)
 
         elif choice == "5":
             print("=== Pick your color ! ===\n")

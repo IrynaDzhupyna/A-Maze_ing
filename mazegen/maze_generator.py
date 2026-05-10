@@ -19,7 +19,7 @@ class MazeGenerator:
             perfect (bool, optional): whether the maze is perfect
             seed (int|None): random seed
          """
-    def __init__(self, width, height, entry_pos, exit_pos, perfect=True, seed=None):
+    def __init__(self, width, height, entry_pos, exit_pos, perfect=True, seed=None) -> None:
         # describes initalization (inputs)
         #   what you passed in and what they mean
         """
@@ -44,9 +44,6 @@ class MazeGenerator:
         self.perfect = perfect
         self.maze = None # not created yet
 
-# having generate() separated allows:
-#   - to set extra options before generating
-#   - or generate multiple mazes with the same generator 
 
     def generate(self) -> None:
         """
@@ -59,7 +56,7 @@ class MazeGenerator:
                 None
         """
         random.seed(self.seed)
-        self.maze: Maze = Maze(self.width, self.height, self.entry_pos, self.exit_pos, self.perfect)
+        self.maze = Maze(self.width, self.height, self.entry_pos, self.exit_pos, self.perfect)
         self.maze.generate()
 
 
@@ -73,7 +70,7 @@ class MazeGenerator:
             ValueError if generate() has not been called yet. 
         """
         if self.maze is None:
-            raise ValueError("maze wasn't generated yet. Call generate() first")
+            raise ValueError("Maze hasn't been generated yet. Call generate() first")
         return self.maze
         
         

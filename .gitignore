@@ -1,12 +1,17 @@
-# Virtual enviroment
-.venv/
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
 
 # Python cache
 */__pycache__
 
-# Type checker cache
-.mypy_cache/
-
-# Pytest cache
+# Pthest_cache
 .pytest_cache
 test/

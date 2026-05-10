@@ -1,7 +1,7 @@
 SRC = src
 
-NAME = $(SRC)/a_maze_ing.py
-CONFIG = $(SRC)/config.txt
+NAME = a_maze_ing.py
+CONFIG = config.txt
 
 VENV = .venv
 
@@ -11,9 +11,9 @@ run: install
 install: $(VENV)
 
 # create a virtual enviroment in inside existing folder
-$(VENV): pyproject.toml uv.lock	
-	pipx install uv
-	uv venv --python 3.10
+$(VENV): pyproject.toml
+	pip install uv
+	uv venv --python 3.10.12
 	uv sync --all-groups
 
 debug:

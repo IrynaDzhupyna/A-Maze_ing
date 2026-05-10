@@ -34,6 +34,7 @@ def solve(maze):
     if end not in came_from:
         return []
     path = []
+    # reconstruction loop - starts at the exit and goes back to start
     current = end
     while current != start:
         current, direction = came_from[current]

@@ -33,10 +33,8 @@ def make_generator(data_dict: dict[str, str]) -> MazeGenerator:
     generator = MazeGenerator(
         width = int(data_dict["WIDTH"]),
         height = int(data_dict["HEIGHT"]),
-        entry_x = int(entry_x),
-        entry_y = int(entry_y),
-        exit_x = int(exit_x),
-        exit_y = int(exit_y),
+        entry_pos = (int(entry_x),int(entry_y)),
+        exit_pos = (int(exit_x),int(exit_y)),
         perfect = data_dict["PERFECT"] == "True",
         seed = int(data_dict["SEED"])
     )
@@ -61,9 +59,6 @@ def main():
     generator = make_generator(data_dict)
     
     # random.seed(int(data_dict["SEED"])) # sets the random num gen starting point from seed(config.txt), maze is reproducible
-    #    this 2 lnes we dont need anymore
-    # maze = Maze(int(data_dict["WIDTH"]), int(data_dict["HEIGHT"]), data_dict)
-    # seed = int(data_dict["SEED"])
     # maze.generate()  # generate a unique path throught all the cells with DFS
 
     print("===========================================")
@@ -109,19 +104,25 @@ def main():
             data_dict = fill_the_dict(content)
 
             generator = make_generator(data_dict)
-            # seed = int(data_dict["SEED"])
 
-
+        # regenerate the maze
         elif choice == "2":
             generator.generate()
             maze_obj = generator.get_maze()
+            path = solve(maze_obj)
             display(maze_obj)
             display_hex(maze_obj)
-            
+            write_output_file(data_dict["OUTPUT_FILE"], maze_obj, path)
+        
+        # show path, maze and path already written to a file
         elif choice == "3":
-            maze_obj = generator.get_maze()
+            try:
+                maze_obj = generator.get_maze()
+            except ValueError:
+                continue
             path = solve(maze_obj)
-            display_after_solve(maze_obj, path)  # display the grid on the terminal
+            # display the grid on the terminal
+            display_after_solve(maze_obj, path)
             display_hex(maze_obj)
             print(path)
 
@@ -136,8 +137,10 @@ def main():
             generator.generate()
 
             maze_obj = generator.get_maze()
+            path = solve(maze_obj)
             display(maze_obj)
             display_hex(maze_obj)
+            write_output_file(data_dict["OUTPUT_File"], maze_obj, path)
 
         elif choice == "5":
             print("=== Pick your color ! ===\n")
@@ -160,9 +163,6 @@ def main():
         
         elif choice == "q":
             break
-
-        # writes the hex maze && entry/exit coordinates and shortest way to file
-        # write_output_file(data_dict["OUTPUT_FILE"], maze, path)
 
 
 if __name__ == "__main__":

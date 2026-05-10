@@ -16,7 +16,8 @@ YELLOW = '\033[33m'
 
 RESET = '\033[0m'
 
-def make_generator(data_dict: dict[str, str]) -> MazeGenerator|None:
+
+def make_generator(data_dict: dict[str, str]) -> MazeGenerator | None:
     """
     Creates a MazeGenerator from parsed config dictionary. 
 
@@ -27,18 +28,18 @@ def make_generator(data_dict: dict[str, str]) -> MazeGenerator|None:
         MazeGenerator: A new MazeGenerator instance
         None: In case of ValueError
     """
-    
+
     entry_x, entry_y = data_dict["ENTRY"].split(",")
     exit_x, exit_y = data_dict["EXIT"].split(",")
 
     try:
         generator = MazeGenerator(
-            width = int(data_dict["WIDTH"]),
-            height = int(data_dict["HEIGHT"]),
-            entry_pos = (int(entry_x),int(entry_y)),
-            exit_pos = (int(exit_x),int(exit_y)),
-            perfect = data_dict["PERFECT"] == "True",
-            seed = int(data_dict["SEED"])
+            width=int(data_dict["WIDTH"]),
+            height=int(data_dict["HEIGHT"]),
+            entry_pos=(int(entry_x), int(entry_y)),
+            exit_pos=(int(exit_x), int(exit_y)),
+            perfect=data_dict["PERFECT"] == "True",
+            seed=int(data_dict["SEED"])
         )
     except ValueError as e:
         return print_error(f"Invalid configuration value: {e}")
@@ -49,13 +50,13 @@ def main():
 
     if len(sys.argv) != 2:
         return print_error("Not enough arguments")
-    
+
     file_name = sys.argv[1]
     content = read_file(file_name)
-    
+
     if not content:
         return print_error("Problem with reading the file")
-    
+
     data_dict = fill_the_dict(content)
     if not data_dict or not validate_config(data_dict):
         return
@@ -63,14 +64,14 @@ def main():
     generator = make_generator(data_dict)
     if not generator:
         return
-    
+
     # random.seed(int(data_dict["SEED"])) # sets the random num gen starting point from seed(config.txt), maze is reproducible
     # maze.generate()  # generate a unique path throught all the cells with DFS
 
     print("===========================================")
     print("=== Welcome to Iryna and Gianni's Maze! ===")
     print("===========================================\n")
-    
+
     while True:
         print("0: display configuration")
         print("1: modify configuration")
@@ -103,10 +104,10 @@ def main():
             modif_data(file_name, modif, generator)
 
             content = read_file(file_name)
-                
+
             if not content:
                 return print_error("Problem with reading the file")
-            
+
             data_dict = fill_the_dict(content)
 
             generator = make_generator(data_dict)
@@ -121,7 +122,7 @@ def main():
             display(maze_obj)
             display_hex(maze_obj)
             write_output_file(data_dict["OUTPUT_FILE"], maze_obj, path)
-        
+
         # show path, maze and path already written to a file
         elif choice == "3":
             try:
@@ -137,7 +138,7 @@ def main():
         elif choice == "4":
             current_perfect = data_dict["PERFECT"] == "True"
             modif_file(file_name, not current_perfect)
-            
+
             content = read_file(file_name)
             data_dict = fill_the_dict(content)
 
@@ -168,7 +169,7 @@ def main():
             except ValueError:
                 continue
             display_with_color(maze_obj, color)
-        
+
         elif choice == "q":
             break
 

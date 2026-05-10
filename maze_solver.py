@@ -11,11 +11,11 @@ def solve(maze):
     came_from = {start: None}
 
     directions = [
-            (0, -1, "N"),
-            (1, 0, "E"),
-            (0, 1, "S"),
-            (-1, 0, "W")
-        ]
+        (0, -1, "N"),
+        (1, 0, "E"),
+        (0, 1, "S"),
+        (-1, 0, "W")
+    ]
 
     while queue:
         current = queue.popleft()

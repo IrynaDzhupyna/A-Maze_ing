@@ -1,6 +1,3 @@
-from typing import List, Tuple
-# from colorist import Color
-
 WHITE = '\033[97m'
 RED = '\033[31m'
 BLUE = '\033[34m'
@@ -8,6 +5,7 @@ GREEN = '\033[32m'
 YELLOW = '\033[33m'
 
 RESET = '\033[0m'
+
 
 def display(maze):  # display 2 lines for every row
     # of the grid : top one ( horizontal walls)
@@ -150,17 +148,17 @@ def display_with_color(maze, color):
         elif color == "2":
             print(BLUE + top + "+")
             print(middle + "|")
-        
+
         elif color == "3":
             print(GREEN + top + "+")
             print(middle + "|")
-        
+
         elif color == "4":
             print(YELLOW + top + "+")
             print(middle + "|")
-        
+
         elif color == "5":
             print(WHITE + top + "+")
             print(middle + "|")
-        
+
     print("+---" * maze.width + "+" + RESET)

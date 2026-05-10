@@ -10,6 +10,7 @@ class Cell:
         visited (bool): Whether the cell has been visited during generation.
         walls (dict): Dictionary of wall states for each directions (N, E, S, W).
     """
+
     def __init__(self, x: int, y: int) -> None:
         """Initializes the cell and set all walls to True (closed)
 
@@ -27,10 +28,9 @@ class Cell:
             "W": True
         }
 
-
     def cell_to_hex(self) -> str:
         """Converts cell wall states to a hexadecimal character.
-        
+
         Returns:
             str: A single hex char representing the cell's wall configuration
         """

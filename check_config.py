@@ -34,7 +34,6 @@ def fill_the_dict(content):
         return dictunary
 
 
-
 '''def main():
     if len(sys.argv) != 2:
         return print_error("Not enough argumens")

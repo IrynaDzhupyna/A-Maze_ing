@@ -4,13 +4,14 @@ from .maze import Maze
 # the things the user interacts with:
 #   - takes parameters, kicks off generation, exposes the result
 
+
 class MazeGenerator:
     # describes the object
     #   what class represents, what used for, what it stores (attributes)
     """
         Generates a maze based on given parameters such as size,
         entry/exit positions, and generation type(perfect/imperfect).
-         
+
         Attributes:
             width (int): width of maze
             height (int): height of maze
@@ -19,6 +20,7 @@ class MazeGenerator:
             perfect (bool, optional): whether the maze is perfect
             seed (int|None): random seed
          """
+
     def __init__(self, width, height, entry_pos, exit_pos, perfect=True, seed=None) -> None:
         # describes initalization (inputs)
         #   what you passed in and what they mean
@@ -33,17 +35,17 @@ class MazeGenerator:
             perfect (bool, optional): if True, generates a perfect maze
                                         (no loops, only one way path between two points).
                                         Defaults to True
-                                    
-            seed (int|None): random seed for reproducible maze generation. If None, randomness is not fixed"""
-        # stores the parameters
+
+            seed (int|None): random seed for reproducible maze generation. If None, randomness is not fixed
+        """
+
         self.width = width
         self.height = height
         self.entry_pos = entry_pos
         self.exit_pos = exit_pos
         self.seed = seed
         self.perfect = perfect
-        self.maze = None # not created yet
-
+        self.maze = None  # not created yet
 
     def generate(self) -> None:
         """
@@ -56,9 +58,9 @@ class MazeGenerator:
                 None
         """
         random.seed(self.seed)
-        self.maze = Maze(self.width, self.height, self.entry_pos, self.exit_pos, self.perfect)
+        self.maze = Maze(self.width, self.height,
+                         self.entry_pos, self.exit_pos, self.perfect)
         self.maze.generate()
-
 
     def get_maze(self) -> Maze:
         """
@@ -70,7 +72,6 @@ class MazeGenerator:
             ValueError if generate() has not been called yet. 
         """
         if self.maze is None:
-            raise ValueError("Maze hasn't been generated yet. Call generate() first")
+            raise ValueError(
+                "Maze hasn't been generated yet. Call generate() first")
         return self.maze
-        
-        

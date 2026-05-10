@@ -16,7 +16,7 @@ YELLOW = '\033[33m'
 
 RESET = '\033[0m'
 
-def make_generator(data_dict: dict[str, str]) -> MazeGenerator:
+def make_generator(data_dict: dict[str, str]) -> MazeGenerator|None:
     """
     Creates a MazeGenerator from parsed config dictionary. 
 
@@ -24,20 +24,23 @@ def make_generator(data_dict: dict[str, str]) -> MazeGenerator:
         data_dict (dict[str, str]): dictionary of key:values configurations
 
     Returns: 
-        MazeGenerator: A new MazeGenerator instance
+        MazeGenerator|None: A new MazeGenerator instance or None if creation fails
     """
     
     entry_x, entry_y = data_dict["ENTRY"].split(",")
     exit_x, exit_y = data_dict["EXIT"].split(",")
-
-    generator = MazeGenerator(
-        width = int(data_dict["WIDTH"]),
-        height = int(data_dict["HEIGHT"]),
-        entry_pos = (int(entry_x),int(entry_y)),
-        exit_pos = (int(exit_x),int(exit_y)),
-        perfect = data_dict["PERFECT"] == "True",
-        seed = int(data_dict["SEED"])
-    )
+    try:
+        generator = MazeGenerator(
+            width = int(data_dict["WIDTH"]),
+            height = int(data_dict["HEIGHT"]),
+            entry_pos = (int(entry_x),int(entry_y)),
+            exit_pos = (int(exit_x),int(exit_y)),
+            perfect = data_dict["PERFECT"] == "True",
+            seed = int(data_dict["SEED"])
+        )
+    except ValueError as e:
+        print_error(f"Invalid value in configuration: {e}")
+        return None
     return generator
 
 
@@ -57,6 +60,8 @@ def main():
         return
 
     generator = make_generator(data_dict)
+    if not generator:
+        return
     
     # random.seed(int(data_dict["SEED"])) # sets the random num gen starting point from seed(config.txt), maze is reproducible
     # maze.generate()  # generate a unique path throught all the cells with DFS
@@ -104,6 +109,8 @@ def main():
             data_dict = fill_the_dict(content)
 
             generator = make_generator(data_dict)
+            if not generator:
+                return
 
         # regenerate the maze
         elif choice == "2":

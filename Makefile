@@ -1,4 +1,4 @@
-SRC = src
+SRC = .
 
 NAME = a_maze_ing.py
 CONFIG = config.txt
@@ -24,7 +24,8 @@ clean:
 
 lint:
 	uvx flake8 $(SRC)
-	uv run mypy $(SRC)
+	uv run mypy $(SRC) --warn-return-any --warn-unused-ignores \
+		--ignore-missing-imports --isallow-untyped-defs --check-untyped-defs
 
 lint-strict:
 	uvx flake8 $(SRC)

@@ -84,7 +84,7 @@ def validate_config(data_dict: dict) -> bool:
             int(x)
             int(y)
         except ValueError:
-            print_error(f"{key} must be in x, y format")
+            print_error(f"{key} must be int in x, y format")
             return False
     return True
 

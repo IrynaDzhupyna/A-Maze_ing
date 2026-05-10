@@ -24,11 +24,13 @@ def make_generator(data_dict: dict[str, str]) -> MazeGenerator|None:
         data_dict (dict[str, str]): dictionary of key:values configurations
 
     Returns: 
-        MazeGenerator|None: A new MazeGenerator instance or None if creation fails
+        MazeGenerator: A new MazeGenerator instance
+        None: In case of ValueError
     """
     
     entry_x, entry_y = data_dict["ENTRY"].split(",")
     exit_x, exit_y = data_dict["EXIT"].split(",")
+
     try:
         generator = MazeGenerator(
             width = int(data_dict["WIDTH"]),
@@ -39,8 +41,7 @@ def make_generator(data_dict: dict[str, str]) -> MazeGenerator|None:
             seed = int(data_dict["SEED"])
         )
     except ValueError as e:
-        print_error(f"Invalid value in configuration: {e}")
-        return None
+        return print_error(f"Invalid configuration value: {e}")
     return generator
 
 

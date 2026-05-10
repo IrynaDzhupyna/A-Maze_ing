@@ -12,6 +12,19 @@ wheels/
 # Python cache
 */__pycache__
 
-# Pthest_cache
+# Pytest_cache
 .pytest_cache
 test/
+
+# mypy cache
+.mypy_cache/
+
+# Python version file
+.python_version
+
+# hidden Mac OS
+.DB_Store
+
+# Linux
+*~
+.fuse_hidden*

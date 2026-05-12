@@ -19,7 +19,7 @@ YELLOW = '\033[33m'
 RESET = '\033[0m'
 
 
-def make_generator(data_dict: dict[str, str]) -> MazeGenerator | str:
+def make_generator(data_dict: dict[str, str]) -> MazeGenerator | None:
     """
     Creates a MazeGenerator from parsed config dictionary.
 
@@ -44,7 +44,8 @@ def make_generator(data_dict: dict[str, str]) -> MazeGenerator | str:
             seed=int(data_dict["SEED"]) if "SEED" in data_dict else None
         )
     except ValueError as e:
-        return (f"Invalid configuration value: {e}")
+        print_error(f"Invalid configuration value: {e}")
+        return None
     return generator
 
 
@@ -74,6 +75,13 @@ def main():
     print("===========================================")
     print("=== Welcome to Iryna and Gianni's Maze! ===")
     print("===========================================\n")
+
+    generator.generate()
+    maze_obj = generator.get_maze()
+    path = solve(maze_obj)
+    display(maze_obj)
+    display_hex(maze_obj)
+    write_output_file(data_dict["OUTPUT_FILE"], maze_obj, path)
 
     while True:
         print("0: display configuration")
@@ -114,6 +122,7 @@ def main():
             data_dict = fill_the_dict(content)
 
             generator = make_generator(data_dict)
+            generator.generate()
             if not generator:
                 return
 

@@ -2,7 +2,7 @@ import sys
 from mazegen import MazeGenerator
 
 
-def read_file(file_name: str) -> str:
+def read_file(file_name: str) -> None | str:
     """
         Reads and returns the content of the file
 
@@ -20,13 +20,12 @@ def read_file(file_name: str) -> str:
         with open(file_name, 'r') as f:
             content = f.read()
     except (FileNotFoundError, NotADirectoryError, IsADirectoryError):
-        return (f"Error opening file '{file_name}': "
-                f"[Errno 2] No such file or directory: '{file_name}'")
+        print(f"Error opening file '{file_name}': "
+              f"[Errno 2] No such file or directory: '{file_name}'")
     except PermissionError:
-        return (f"Error opening file '{file_name}': "
-                f"[Errno 13] Permission denied: {file_name}'")
-    else:
-        return content
+        print(f"Error opening file '{file_name}': "
+              f"[Errno 13] Permission denied: {file_name}'")
+    return content
 
 
 def fill_the_dict(content: str) -> dict[str, str] | None:
@@ -41,8 +40,8 @@ def fill_the_dict(content: str) -> dict[str, str] | None:
             content (str): file content as a single string
 
         Returns:
-            dict[str: str]: a dictionary of
-            parsed key-value pairs if successful
+            dict[str: str]: a dictionary of parsed
+            key-value pairs if successful
             None: if parsing fails
 
         Side Effects:
@@ -114,8 +113,8 @@ def modif_file(file_name: str, value: str) -> None:
     """
         Updates the value of the "PERFECT" key in configuration file.
 
-        It reads the file line by line,
-        replaces the line starts with "PERFECT=" with the new value
+        It reads the file line by line, replaces
+        the line starts with "PERFECT=" with the new value
         and writes content back to a file.
 
         Args:
@@ -149,8 +148,8 @@ def modif_file(file_name: str, value: str) -> None:
 
 # raising ValueError was changed to print_error() + return
 #   a_maze_ing.py calls modif_data.
-# We don't have try/except there for
-# this call so a_maze_ing.py it doesn't catches it
+# We don't have try/except there for this call
+# so a_maze_ing.py it doesn't catches it
 #   so the error bubbles the way up and crashes the program with traceback
 #       Rule of thumb: raise when you expect the caller to handle the error
 

@@ -1,3 +1,4 @@
+import random
 from .maze import Maze
 # MazeGenerator class here
 # the things the user interacts with:
@@ -65,6 +66,7 @@ class MazeGenerator:
             Returns:
                 None
         """
+        random.seed(self.seed)
         maze = Maze(self.width,
                     self.height,
                     self.entry_pos,

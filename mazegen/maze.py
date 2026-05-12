@@ -191,10 +191,8 @@ class Maze:
                 break
 
         if not self.perfect:
-            print("Imperfect maze")
 
             nb_walls_to_break = int((self.width * self.height) * 0.1)
-            print("number of walls to remove :", nb_walls_to_break)
 
             removed_wall = 0
 
@@ -227,7 +225,6 @@ class Maze:
                 else:
                     self.remove_wall(cell, neighbor, direction)
                     removed_wall += 1
-                    # print("wall removed")
 
     def is_corridor(self, cell):
         open_walls = sum(not w for w in cell.walls.values())

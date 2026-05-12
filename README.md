@@ -57,9 +57,21 @@ and **BFS (Breadth-First Search)** for finding the shortest path.
 We chose DFS because it produces mazes with long winding corridors and few 
 dead ends, which makes them visually interesting and challenging to solve.
 
+BFS was chosen because of simple implementation. It garantees shortest path and works on unweighted graphs - all cells are equal cost to move through. And as DFS always creates at least one path BFS will find it.
+
 ## Reusable Module (mazegen)
 
 The maze generation logic is packaged as a reusable Python module called `mazegen`.
+
+To create a package use: `python3 -m build`
+
+This command generates two types of artifacts in the dist/ directory:
+
+``.tar.gz``:
+    A source distribution (sdist) containing the raw source code and metadata, which users can compile locally.
+
+``.whl``:
+    A built wheel file, which is a pre-compiled binary package that allows for faster installation without requiring a build step on the user's machine.
 
 ### Installation
 \```bash
@@ -144,6 +156,7 @@ and updated all other files to work with the new structure.
 ### What could be improved
 - We could have written tests earlier to catch bugs faster
 - The ASCII display could be prettier with Unicode characters
+- We still want to work on visualization later
 
 ### Tools used
 - VSCode

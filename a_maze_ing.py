@@ -41,10 +41,11 @@ def make_generator(data_dict: dict[str, str]) -> MazeGenerator | None:
             entry_pos=(int(entry_x), int(entry_y)),
             exit_pos=(int(exit_x), int(exit_y)),
             perfect=data_dict["PERFECT"] == "True",
-            seed=int(data_dict["SEED"])
+            seed=int(data_dict["SEED"]) if "SEED" in data_dict else None
         )
     except ValueError as e:
         print_error(f"Invalid configuration value: {e}")
+        return
     return generator
 
 

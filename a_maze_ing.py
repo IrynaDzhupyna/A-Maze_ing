@@ -1,11 +1,13 @@
 import sys
+
 from mazegen import MazeGenerator
-from read_config_file import fill_the_dict, print_error, read_file, modif_file, modif_data, validate_config
-# from typing import List, Dict, Tuple
+from read_config_file import fill_the_dict, print_error, read_file
+from read_config_file import modif_file, modif_data
+from read_config_file import validate_config
 from get_output_file import write_output_file
-# for BFS queue
 from maze_solver import solve
-from maze_displayer import display, display_hex, display_after_solve, display_with_color
+from maze_displayer import display, display_hex
+from maze_displayer import display_after_solve, display_with_color
 
 
 WHITE = '\033[97m'
@@ -19,12 +21,12 @@ RESET = '\033[0m'
 
 def make_generator(data_dict: dict[str, str]) -> MazeGenerator | None:
     """
-    Creates a MazeGenerator from parsed config dictionary. 
+    Creates a MazeGenerator from parsed config dictionary.
 
     Args:
         data_dict (dict[str, str]): dictionary of key:values configurations
 
-    Returns: 
+    Returns:
         MazeGenerator: A new MazeGenerator instance
         None: In case of ValueError
     """
@@ -42,7 +44,7 @@ def make_generator(data_dict: dict[str, str]) -> MazeGenerator | None:
             seed=int(data_dict["SEED"])
         )
     except ValueError as e:
-        return print_error(f"Invalid configuration value: {e}")
+        print_error(f"Invalid configuration value: {e}")
     return generator
 
 
@@ -65,7 +67,8 @@ def main():
     if not generator:
         return
 
-    # random.seed(int(data_dict["SEED"])) # sets the random num gen starting point from seed(config.txt), maze is reproducible
+    # random.seed(int(data_dict["SEED"]))
+    # # sets the random num gen starting point from seed(config.txt)
     # maze.generate()  # generate a unique path throught all the cells with DFS
 
     print("===========================================")

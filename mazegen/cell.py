@@ -8,7 +8,8 @@ class Cell:
         x (int): Colum position of the cell
         y (int): Row position of the cell.
         visited (bool): Whether the cell has been visited during generation.
-        walls (dict): Dictionary of wall states for each directions (N, E, S, W).
+        walls (dict): Dictionary of wall states
+        for each directions (N, E, S, W).
     """
 
     def __init__(self, x: int, y: int) -> None:
@@ -44,6 +45,6 @@ class Cell:
             cell_hex += 2**2
         if self.walls["W"]:
             cell_hex += 2**3
-        cell_hex = format(cell_hex, "X")
+        cell_hex_str = format(cell_hex, "X")
 
-        return cell_hex
+        return cell_hex_str

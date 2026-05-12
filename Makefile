@@ -26,6 +26,7 @@ lint:
 	uv run mypy $(SRC) --warn-return-any --warn-unused-ignores \
 		--ignore-missing-imports --disallow-untyped-defs --check-untyped-defs
 
+# check other flags
 lint-strict:
 	uvx flake8 $(SRC)
 	uv run mypy --strict $(SRC)

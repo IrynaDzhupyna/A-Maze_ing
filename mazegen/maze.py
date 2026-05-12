@@ -15,13 +15,20 @@ class Maze:
         exit_pos(tuple[int, int]): x, y position of exit point
         perfect (bool): specifies that only one way of solving is possible
         grid (list): 2D list of Cell objects
-        pattern_42 (list): list of (x, y) tuples marking the cell that form the "42" pattern.
+        pattern_42 (list): list of (x, y) tuples marking
+        the cell that form the "42" pattern.
     """
 
-    def __init__(self, width: int, height: int, entry_pos: tuple[int, int], exit_pos: tuple[int, int], perfect: bool = True) -> None:
+    def __init__(self, width: int,
+                 height: int,
+                 entry_pos: tuple[int, int],
+                 exit_pos: tuple[int, int],
+                 perfect: bool = True) -> None:
         """Represents a rectangular maze with entry and exit points.
-            The maze checks that its width and height are within allowed limits, 
-            and that the entry and exit positions are valid (inside the maze and properly formatted).
+            The maze checks that its width and
+            height are within allowed limits,
+            and that the entry and exit positions
+            are valid (inside the maze and properly formatted).
 
            Args:
             width (int): amound of colums in maze
@@ -48,7 +55,8 @@ class Maze:
             for y in range(height)
         ]
 
-        if self.width >= MIN_WIDTH_FOR_PATTERN and self.height >= MIN_HEIGHT_FOR_PATTERN:
+        if (self.width >= MIN_WIDTH_FOR_PATTERN
+                and self.height >= MIN_HEIGHT_FOR_PATTERN):
             self.pattern_42 = self.generate_pattern_42()
         else:
             print("Maze is too small to fit the 42 pattern")
@@ -70,7 +78,8 @@ class Maze:
                 Cell
 
             Raises:
-                ValueError: if the coordinates are outside of the maze bounds"""
+                ValueError: if the coordinates
+                are outside of the maze bounds"""
         if not (0 <= x < self.width and 0 <= y < self.height):
             raise ValueError(f"Invalid coordinates : ({x}, {y})")
         return self.grid[y][x]
@@ -90,7 +99,10 @@ class Maze:
         if height*width >= 32000:
             raise ValueError("Grid cannot have more than 32000 cells")
 
-    def _validate_position(self, pos: tuple[int, int], name: str, width: int, height: int) -> None:
+    def _validate_position(self,
+                           pos: tuple[int, int],
+                           name: str, width: int,
+                           height: int) -> None:
         """Validates a position inside the maze.
 
             Args:

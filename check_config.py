@@ -1,7 +1,7 @@
 import sys
 
 
-def print_error(message):
+def print_error(message) -> None:
     print(f"{message}", file=sys.stderr)
 
 

@@ -2,7 +2,7 @@ import sys
 from mazegen import MazeGenerator
 
 
-def read_file(file_name: str) -> str | None:
+def read_file(file_name: str) -> str:
     """
         Reads and returns the content of the file
 
@@ -20,11 +20,11 @@ def read_file(file_name: str) -> str | None:
         with open(file_name, 'r') as f:
             content = f.read()
     except (FileNotFoundError, NotADirectoryError, IsADirectoryError):
-        print(f"Error opening file '{file_name}': "
-              f"[Errno 2] No such file or directory: '{file_name}'")
+        return (f"Error opening file '{file_name}': "
+                f"[Errno 2] No such file or directory: '{file_name}'")
     except PermissionError:
-        print(f"Error opening file '{file_name}': "
-              f"[Errno 13] Permission denied: {file_name}'")
+        return (f"Error opening file '{file_name}': "
+                f"[Errno 13] Permission denied: {file_name}'")
     else:
         return content
 
@@ -33,14 +33,16 @@ def fill_the_dict(content: str) -> dict[str, str] | None:
     """
         Parses the file into dictionary of key-value pairs.
 
-        Each non-empty line that does not start with "#" is expected to be in the format "key=value". 
+        Each non-empty line that does not start
+        with "#" is expected to be in the format "key=value".
         Leading and trailing is removed from both keys and values.
 
         Args:
             content (str): file content as a single string
 
         Returns:
-            dict[str: str]: a dictionary of parsed key-value pairs if successful
+            dict[str: str]: a dictionary of
+            parsed key-value pairs if successful
             None: if parsing fails
 
         Side Effects:
@@ -63,7 +65,8 @@ def fill_the_dict(content: str) -> dict[str, str] | None:
 
 
 def validate_config(data_dict: dict) -> bool:
-    """Checks if keys from data_dict we send is valid, have all keys and values needed
+    """Checks if keys from data_dict we send is valid,
+    have all keys and values needed
 
         Returns:
             True if all is fine
@@ -111,7 +114,8 @@ def modif_file(file_name: str, value: str) -> None:
     """
         Updates the value of the "PERFECT" key in configuration file.
 
-        It reads the file line by line, replaces the line starts with "PERFECT=" with the new value
+        It reads the file line by line,
+        replaces the line starts with "PERFECT=" with the new value
         and writes content back to a file.
 
         Args:
@@ -144,7 +148,9 @@ def modif_file(file_name: str, value: str) -> None:
         return
 
 # raising ValueError was changed to print_error() + return
-#   a_maze_ing.py calls modif_data. We don't have try/except there for this call so a_maze_ing.py it doesn't catches it
+#   a_maze_ing.py calls modif_data.
+# We don't have try/except there for
+# this call so a_maze_ing.py it doesn't catches it
 #   so the error bubbles the way up and crashes the program with traceback
 #       Rule of thumb: raise when you expect the caller to handle the error
 
@@ -256,10 +262,9 @@ def modif_data(file_name: str, modif: str, maze: MazeGenerator) -> None:
     elif modif == "3":
         print("enter the new entry coordinates:(x,y)")
         try:
-            value = input("> ")
-            x, y = value.split(",")
-            x = int(x)
-            y = int(y)
+            x_str, y_str = input("> ").split(",")
+            x = int(x_str)
+            y = int(y_str)
         except ValueError:
             print_error("Enter coordinates in x, y format")
             return
@@ -295,10 +300,9 @@ def modif_data(file_name: str, modif: str, maze: MazeGenerator) -> None:
     elif modif == "4":
         print("enter the new exit coordinates:(x,y)")
         try:
-            value = input("> ")
-            x, y = value.split(",")
-            x = int(x)
-            y = int(y)
+            x_str, y_str = input("> ").split(",")
+            x = int(x_str)
+            y = int(y_str)
         except ValueError:
             print_error("Enter coordinates in x, y format")
             return
@@ -334,7 +338,7 @@ def modif_data(file_name: str, modif: str, maze: MazeGenerator) -> None:
 
     elif modif == "5":
         print("enter the seed number:")
-        value = input("> ")
+        value = int(input("> "))
 
         for line in lines:
             if line.startswith("SEED="):
